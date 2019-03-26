@@ -6,7 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
+    <TextView
+        android:id="@+id/enemy_name"
+        android:layout_above="@+id/enemy_body"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enemy Name"/>
     <ImageButton
+        android:id="@+id/enemy_body"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerVertical="true"
@@ -14,5 +23,13 @@
         android:scaleType="fitCenter"
         android:src="@drawable/bat"
         android:background="@android:color/transparent"/>
+    <TextView
+        android:id="@+id/temp_energy"
+        android:layout_below="@+id/enemy_body"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="energy"/>
 
 </RelativeLayout>
