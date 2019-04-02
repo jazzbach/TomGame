@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">2048Tom</string>
+
+    <string name="tutorial_1">Tap the enemies that appear to deal damage to them
+    The enemy is defeated when their life reaches 0.</string>
+    <string name="tutorial_2">After an enemy is defeated, your kill counter increases
+    How many enemies can you defeat?</string>
+    <string name="tutorial_3">The more enemies you kill, the more damage you deal
+    You can also visit the shop to buy new weapons!</string>
 </resources>

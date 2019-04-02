@@ -13,6 +13,7 @@ public class PersistenceManager {
     private static final String USER_WEAPON = "user_weapon";
     private static final String USER_DAMAGE = "user_damage";
     private static final String USER_SCORE = "user_score";
+    private static final String SHOULD_SHOW_TUTORIAL = "should_show_tutorial";
     private SharedPreferences sharedPref;
     private static PersistenceManager persistenceManager;
 
@@ -54,6 +55,16 @@ public class PersistenceManager {
 
     public Player retrivePlayer(){
         return new Player(retrive(USER_NAME),Double.parseDouble(retrive(USER_DAMAGE)),retrive(USER_WEAPON),Double.parseDouble(retrive(USER_SCORE)));
+    }
+
+    public boolean retriveShouldShowTutorial(){
+        return sharedPref.getBoolean(SHOULD_SHOW_TUTORIAL,true);
+    }
+
+    public void persistShouldSHowTutorial(boolean value){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(SHOULD_SHOW_TUTORIAL, value);
+        editor.apply();
     }
 
 }
