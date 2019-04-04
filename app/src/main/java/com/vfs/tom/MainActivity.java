@@ -8,7 +8,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.vfs.tom.managers.PersistenceManager;
 import com.vfs.tom.model.Enemy;
+import com.vfs.tom.model.Player;
 
 public class MainActivity extends AppCompatActivity {
     //TODO generate player class (damage done, current weapon, ?)
@@ -17,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton enemyBody;
     private Enemy currentEnemy;
     //VALOR TEMPORAL
-    private int playerDamage;
+    //private int playerDamage;
+    private static Player player;
     private TextView enemyName;
     private TextView tempEnergy;
 
@@ -41,11 +44,14 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
-                        Log.e("pruebita","down");
                         break;
                     case MotionEvent.ACTION_UP:
-                        Log.e("pruebita","up");
-                        handleAttack();
+                        if(currentEnemy.getEnergy()>0){
+                            handleAttack();
+                        }else{
+                            enemyDefeated();
+                        }
+
                         break;
                 }
                 return true;
@@ -53,13 +59,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void setUpGame(){
+        PersistenceManager persistenceManager = PersistenceManager.getInstance(getApplicationContext());
+        Player tmpPlayer = null;
+        try{
+            tmpPlayer = persistenceManager.retrivePlayer();
+            String a ="d";
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         //TODO GET PLAYER PARAMS AND ENEMY VALUES (LEVEL?)
-        playerDamage = 10;
-        /*if(){
-
+        if(tmpPlayer!=null){
+            player = tmpPlayer;
         }else{
-
-        }*/
+            player = new Player("guest",1.0,"sword",0);
+            persistenceManager.persistPlayer(player);
+        }
         generateRound();
 
     }
@@ -73,15 +87,12 @@ public class MainActivity extends AppCompatActivity {
         tempEnergy.setText(String.valueOf(currentEnemy.getEnergy()));
     }
     private void handleAttack(){
-        if(currentEnemy.getEnergy()>0){
-            currentEnemy.onDamageTaken(playerDamage);
-            tempEnergy.setText(String.valueOf(currentEnemy.getEnergy()));
-        }else{
-            enemyDefeated();
-        }
-
+        //TODO calculate real player damage damage+weaponDamage
+        currentEnemy.onDamageTaken(player.getDamageLevel());
+        tempEnergy.setText(String.valueOf(currentEnemy.getEnergy()));
     }
     private void enemyDefeated(){
+        //TODO augment stats, persist stats
         generateRound();
     }
 }
