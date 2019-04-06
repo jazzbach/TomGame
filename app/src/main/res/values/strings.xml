@@ -7,4 +7,7 @@
     How many enemies can you defeat?</string>
     <string name="tutorial_3">The more enemies you kill, the more damage you deal
     You can also visit the shop to buy new weapons!</string>
+
+    <string name="facebook_app_id">2265931396783843</string>
+    <string name="fb_login_protocol_scheme">fb2265931396783843</string>
 </resources>
