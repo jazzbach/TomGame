@@ -61,4 +61,16 @@
         android:layout_marginTop="30dp"
         android:layout_marginBottom="30dp" />
 
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        <!--the above is a test value, change to ca-app-pub-2993800684617551/6390984813 when app is published-->
+    </com.google.android.gms.ads.AdView>
+
 </RelativeLayout>

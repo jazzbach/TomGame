@@ -16,6 +16,9 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.vfs.tom.managers.PersistenceManager;
 import com.vfs.tom.model.Enemy;
 import com.vfs.tom.model.Player;
@@ -23,7 +26,6 @@ import com.vfs.tom.model.Player;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
-    //TODO generate player class (damage done, current weapon, ?)
     //enemy_name
     //temp_energy
     private ImageButton enemyBody;
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String EMAIL = "email";
     private LoginButton loginButton;
     //FBEND
+
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
         //FBEND
+        MobileAds.initialize(this, "ca-app-pub-2993800684617551~8713895821");
+        loadAd();
 
     }
 
@@ -115,6 +121,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //FBEND
+
+        mAdView = findViewById(R.id.adView);
     }
     private void setListeners(){
         enemyBody.setOnTouchListener(new View.OnTouchListener() {
@@ -172,5 +180,9 @@ public class MainActivity extends AppCompatActivity {
     private void enemyDefeated(){
         //TODO augment stats, persist stats
         generateRound();
+    }
+    private void loadAd(){
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 }
