@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     //FBEND
 
     private AdView mAdView;
+
+    private Button pauseButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         //FBEND
 
         mAdView = findViewById(R.id.adView);
+        pauseButton = findViewById(R.id.pause_button);
     }
     private void setListeners(){
         enemyBody.setOnTouchListener(new View.OnTouchListener() {
@@ -141,6 +145,14 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
                 return true;
+            }
+        });
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(getApplicationContext(), StoreActivity.class);
+                startActivity(myIntent);
+                finish();
             }
         });
     }
