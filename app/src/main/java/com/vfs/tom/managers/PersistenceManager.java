@@ -14,6 +14,7 @@ public class PersistenceManager {
     private static final String USER_DAMAGE = "user_damage";
     private static final String USER_SCORE = "user_score";
     private static final String SHOULD_SHOW_TUTORIAL = "should_show_tutorial";
+    private static final String WAS_PACK_PURCHASED = "was_pack_purchased";
     private SharedPreferences sharedPref;
     private static PersistenceManager persistenceManager;
 
@@ -64,6 +65,16 @@ public class PersistenceManager {
     public void persistShouldSHowTutorial(boolean value){
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean(SHOULD_SHOW_TUTORIAL, value);
+        editor.apply();
+    }
+
+    public boolean retriveWasPackPurchased(){
+        return sharedPref.getBoolean(WAS_PACK_PURCHASED,false);
+    }
+
+    public void persistWasPackPurchased(boolean value){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(WAS_PACK_PURCHASED, value);
         editor.apply();
     }
 

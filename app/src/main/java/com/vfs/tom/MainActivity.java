@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -152,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent myIntent = new Intent(getApplicationContext(), StoreActivity.class);
                 startActivity(myIntent);
-                finish();
             }
         });
     }
@@ -161,15 +161,15 @@ public class MainActivity extends AppCompatActivity {
         Player tmpPlayer = null;
         try{
             tmpPlayer = persistenceManager.retrivePlayer();
-            String a ="d";
         }catch (Exception e){
             e.printStackTrace();
         }
         //TODO GET PLAYER PARAMS AND ENEMY VALUES (LEVEL?)
         if(tmpPlayer!=null){
             player = tmpPlayer;
+            Log.e("asd", player.getWeapon());
         }else{
-            player = new Player("guest",1.0,"sword",0);
+            player = new Player("guest",1.0,"Arrow",0);
             persistenceManager.persistPlayer(player);
         }
         generateRound();
@@ -186,7 +186,51 @@ public class MainActivity extends AppCompatActivity {
     }
     private void handleAttack(){
         //TODO calculate real player damage damage+weaponDamage
-        currentEnemy.onDamageTaken(player.getDamageLevel());
+        double baseDamage = player.getDamageLevel();
+        double multiplyer;
+        switch(player.getWeapon()){
+            case "arrow":
+                multiplyer=1.0;
+                break;
+            case "bow":
+                multiplyer=1.5;
+                break;
+            case "bukler":
+                multiplyer=2.0;
+                break;
+            case "cub":
+                multiplyer=2.5;
+                break;
+            case "dagger":
+                multiplyer=3.0;
+                break;
+            case "katana":
+                multiplyer=3.5;
+                break;
+            case "polearm":
+                multiplyer=4.0;
+                break;
+            case "rod":
+                multiplyer=4.5;
+                break;
+            case "shield":
+                multiplyer=5.0;
+                break;
+            case "staff":
+                multiplyer=5.5;
+                break;
+            case "sword":
+                multiplyer=6.0;
+                break;
+            case "trident":
+                multiplyer=6.5;
+                break;
+            default:
+                multiplyer=1.0;
+                break;
+        }
+
+        currentEnemy.onDamageTaken(baseDamage*multiplyer);
         tempEnergy.setText(String.valueOf(currentEnemy.getEnergy()));
     }
     private void enemyDefeated(){
