@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.Profile;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -46,7 +48,13 @@ public class MainActivity extends AppCompatActivity {
 
     private AdView mAdView;
 
-    private Button pauseButton;
+    private LinearLayout pauseButton;
+
+    private Profile profile;
+
+    private PersistenceManager persistenceManager;
+
+    private TextView userName, userScore, userWeapon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,19 +70,19 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         // App code
-                        Log.e("yameloguee","jiji");
+                        player.setUserName(Profile.getCurrentProfile().getName());
+                        persistenceManager.persistPlayer(player);
+                        userName.setText(player.getUserName());
+                        loginButton.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onCancel() {
-                        Log.e("yameloguee","no");
                         // App code
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Log.e("yameloguee","error");
-                        Log.e("yameloguee",exception.getStackTrace().toString());
                         exception.printStackTrace();
 
                         // App code
@@ -100,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
     //FBEND
 
     protected void initView(){
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+        userName = findViewById(R.id.user_name);
+        userScore = findViewById(R.id.user_score);
+        userWeapon = findViewById(R.id.user_weapon);
         enemyBody = findViewById(R.id.enemy_body);
         enemyName = findViewById(R.id.enemy_name);
         tempEnergy = findViewById(R.id.temp_energy);
@@ -111,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                // App code
+
             }
 
             @Override
@@ -125,6 +138,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //FBEND
+        if(isLoggedIn){
+            loginButton.setVisibility(View.GONE);
+        }else{
+            loginButton.setVisibility(View.VISIBLE);
+        }
 
         mAdView = findViewById(R.id.adView);
         pauseButton = findViewById(R.id.pause_button);
@@ -157,20 +175,24 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void setUpGame(){
-        PersistenceManager persistenceManager = PersistenceManager.getInstance(getApplicationContext());
+        persistenceManager = PersistenceManager.getInstance(getApplicationContext());
         Player tmpPlayer = null;
         try{
             tmpPlayer = persistenceManager.retrivePlayer();
         }catch (Exception e){
             e.printStackTrace();
         }
-        //TODO GET PLAYER PARAMS AND ENEMY VALUES (LEVEL?)
         if(tmpPlayer!=null){
             player = tmpPlayer;
-            Log.e("asd", player.getWeapon());
+            userName.setText(player.getUserName());
+            userScore.setText(String.valueOf((int)player.getScore()));
+            userWeapon.setText(player.getWeapon());
         }else{
             player = new Player("guest",1.0,"Arrow",0);
+            userName.setText(player.getUserName());
+            userScore.setText(String.valueOf((int)player.getScore()));
             persistenceManager.persistPlayer(player);
+            userWeapon.setText(player.getWeapon());
         }
         generateRound();
 
@@ -178,14 +200,56 @@ public class MainActivity extends AppCompatActivity {
     private void generateRound(){
         //TODO RANDOM ENEMY TYPE
         //TODO RANDOM ENEMY ENERGY
-        currentEnemy = new Enemy("Bat", 500);
+        int enemyType = (int) (Math.random() * (9 - 1)) + 1;
+        double enemyTempEnergy =0.0;
+        String enemyNameTemp="";
+        switch (enemyType){
+            case 1:
+                enemyNameTemp = "bat";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.bat));
+                break;
+            case 2:
+                enemyNameTemp = "beholder";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.beholder));
+                break;
+            case 3:
+                enemyNameTemp = "crow";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.crow));
+                break;
+            case 4:
+                enemyNameTemp = "cyclops";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.cyclops));
+                break;
+            case 5:
+                enemyNameTemp = "demon";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.demon));
+                break;
+            case 6:
+                enemyNameTemp = "goblin";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.goblin));
+                break;
+            case 7:
+                enemyNameTemp = "orc";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.orc));
+                break;
+            case 8:
+                enemyNameTemp = "skeleton";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.skeleton));
+                break;
+            case 9:
+                enemyNameTemp = "slime";
+                enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.slime));
+                break;
+        }
+
+        enemyTempEnergy = (double) (Math.random() * (player.getDamageLevel()*300 - player.getDamageLevel()*100)) + player.getDamageLevel()*100;
+        currentEnemy = new Enemy(enemyNameTemp, enemyTempEnergy);
         //TODO MECHANISM FOR CHOOSING IMAGE en funcion de enemy type
-        enemyBody.setImageDrawable(getResources().getDrawable(R.drawable.bat));
+
         enemyName.setText(currentEnemy.getEnemyType());
         tempEnergy.setText(String.valueOf(currentEnemy.getEnergy()));
     }
     private void handleAttack(){
-        //TODO calculate real player damage damage+weaponDamage
         double baseDamage = player.getDamageLevel();
         double multiplyer;
         switch(player.getWeapon()){
@@ -234,7 +298,10 @@ public class MainActivity extends AppCompatActivity {
         tempEnergy.setText(String.valueOf(currentEnemy.getEnergy()));
     }
     private void enemyDefeated(){
-        //TODO augment stats, persist stats
+        player.setScore(player.getScore()+1);
+        player.setDamageLevel(player.getDamageLevel()+1.0);
+        persistenceManager.persistPlayer(player);
+        userScore.setText(String.valueOf((int)player.getScore()));
         generateRound();
     }
     private void loadAd(){
